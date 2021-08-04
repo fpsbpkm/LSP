@@ -6,4 +6,4 @@
 私の研究の目的は，これをVimやAtomなど他の統合開発環境でも使えるようにするために  
 Language Server Protocolに移植することです．  
 Language Server Protocolは，エディタ毎の拡張機能の実装の違いを吸収する仕組みです．  
-現在、私は研究の準備としてLanguage Server Protocolの機能や実装方法について勉強しています  
+現在、私は研究の準備としてLanguage Server Protocolの機能や実装方法について勉強しています.  
