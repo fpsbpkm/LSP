@@ -61,9 +61,8 @@ endIndexはwordIndexに終了を示すもの(end,;)が出現した位置とそ�
 let markdownString = new vscode.MarkdownString();
 markdownString.appendCodeblock(
     documentText.slice(startIndex,endIndex), 'mizar');
-resolve(new vscode.Hover(markdownString, wordRange));
 ```
-指定された言語で、指定された文字列をコードブロックとして追加する.
+指定された言語で、指定された文字列をコードブロックとして追加する.  
 `new Hover(contents: MarkdownString | MarkedString | Array<MarkdownString | MarkedString>, range?: Range): Hover`  
 ホバーオブジェクトがつくられる.
 
