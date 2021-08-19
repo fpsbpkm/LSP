@@ -67,3 +67,17 @@ markdownString.appendCodeblock(
 ホバーオブジェクトがつくられる.
 
 ## returnHover
+同ファイル内のホバーの情報を抽出して返す関数.
+```
+let definitionPattern = ":" + hoveredWord + ":";
+let theoremPattern = "theorem " + hoveredWord + ":";
+let labelPattern = hoveredWord + ":";
+```
+定義・定理・ラベルの参照する箇所のパターンをそれぞれ格納する.  
+- hoveredWord: 'A1'のとき  
+  - definitionPattern: ':A1:'  
+  - theoremPattern: 'theorem A1'  
+  - labelPattern: 'A1:'  
+<br>
+これらを使って、何を参照するか決定.  
+その後の処理はreturnMMLHoverと同じ.
