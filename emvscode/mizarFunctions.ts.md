@@ -19,4 +19,17 @@ carrier.carry(makeenvProcess.stdout, (line:string) => {
 ```
 <br>
 
+```
+Make Environment, Mizar Ver. 8.1.11 (Win32/FPC)
+Copyright (c) 1990-2021 Association of Mizar Users
 
+Running verifier on c:\Users\i072ff\Desktop\test-mizar\test.miz
+
+   Start |------------------------------------------------->| End
+Parser   :##################################################
+MSM      :##################################################
+Analyzer :##################################################
+Checker  :##################################################
+
+End.
+```
