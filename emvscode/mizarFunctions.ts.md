@@ -5,7 +5,6 @@
 let makeenvProcess = require('child_process').spawn(makeenv,[fileName]);
 runningCmd['process'] = makeenvProcess;
 ```
-<br>
 
 ```
 carrier.carry(makeenvProcess.stdout, (line:string) => {
@@ -17,7 +16,15 @@ carrier.carry(makeenvProcess.stdout, (line:string) => {
     }
 });
 ```
+↓
+output
+```
+Make Environment, Mizar Ver. 8.1.11 (Win32/FPC)
+Copyright (c) 1990-2021 Association of Mizar Users
+```
+
 <br>
+
 
 ```
 Make Environment, Mizar Ver. 8.1.11 (Win32/FPC)
