@@ -14,7 +14,8 @@ import {
 	CompletionItemKind,
 	TextDocumentPositionParams,
 	TextDocumentSyncKind,
-	InitializeResult
+	InitializeResult,
+	Hover
 } from 'vscode-languageserver/node';
 
 import {
@@ -222,10 +223,15 @@ connection.onCompletionResolve(
 		return item;
 	}
 );
-connection.onHover(() => {
-	return {
-		contents: "Hover"
-	};
+connection.onHover(
+	(params:TextDocumentPositionParams):Hover => {
+		const text = params.textDocument;
+		const pos1 = params.position;
+		const pos2 = params.position;
+		return {
+			contents: "Hover",
+			range:{start:pos1, end:pos2}
+		};
 });
 
 // Make the text document manager listen on the connection
