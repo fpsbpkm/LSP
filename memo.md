@@ -1,3 +1,7 @@
+- textDocument gettext
+- document.ts
+- slackみる
+
 - どこをいじれば何が変わるか
 - 環境構築
 - まとめる
