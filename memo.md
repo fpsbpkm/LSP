@@ -1,4 +1,8 @@
-- textDocument gettext
+- [ ] textDocument gettext
+- [ ] markdownに変換
+- [ ] match,正規表現で単語を抽出
+<br>
+
 - document.ts
 - slackみる
 
