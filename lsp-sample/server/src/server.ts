@@ -15,7 +15,9 @@ import {
 	TextDocumentPositionParams,
 	TextDocumentSyncKind,
 	InitializeResult,
-	Hover
+	Hover,
+	MarkupContent,
+	MarkupKind
 } from 'vscode-languageserver/node';
 
 import {
@@ -224,13 +226,26 @@ connection.onCompletionResolve(
 	}
 );
 connection.onHover(
-	(params:TextDocumentPositionParams):Hover => {
-		const text = params.textDocument;
-		const pos1 = params.position;
-		const pos2 = params.position;
+	(params: TextDocumentPositionParams): Hover => {
+		const document = documents.get(params.textDocument.uri);
+		if (document === undefined) {
+            return {
+				contents: ""
+			};
+        }
+		const position = params.position;
+		const text = document.getText({
+			"start": { "line": position.line, "character": 0 },
+			"end": { "line": position.line, "character": 100 }
+		});
+		const markdown: MarkupContent = {
+			kind: MarkupKind.Markdown,
+			value: text
+		};
+           
 		return {
-			contents: "Hover",
-			range:{start:pos1, end:pos2}
+			contents: markdown,
+			range: {start:position, end:position}
 		};
 });
 
