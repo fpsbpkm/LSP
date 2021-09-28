@@ -239,9 +239,12 @@ connection.onHover(
 			"end": { "line": position.line, "character": 100 }
 		});
 		const markdown: MarkupContent = {
-			kind: MarkupKind.Markdown,
+			kind: MarkupKind.PlainText,
 			value: text
 		};
+		//const markdown: MarkedString[] = [
+		//	{ language: 'Mizar', value: documentText.slice(startIndex,endIndex) }
+		//];
            
 		return {
 			contents: markdown,
