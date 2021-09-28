@@ -18,6 +18,7 @@ import {
 	Hover,
 	MarkupContent,
 	MarkupKind
+	
 } from 'vscode-languageserver/node';
 
 import {
@@ -238,14 +239,58 @@ connection.onHover(
 			"start": { "line": position.line, "character": 0 },
 			"end": { "line": position.line, "character": 100 }
 		});
-		const markdown: MarkupContent = {
-			kind: MarkupKind.Markdown,
-			value: text
+		const wordRange = {
+			"start": { "line": 1224, "character": 38 },
+			"end": { "line": 1224, "character": 40 }
 		};
+		let documentText = document.getText();
+		let hoveredWord = document.getText(wordRange);
+		// ホバーによって示されるテキストの開始・終了インデックスを格納する変数
+		let startIndex:number = -1;
+		let endIndex:number = -1;
+		// 定義・定理・ラベルの参照する箇所のパターンをそれぞれ格納
+		let definitionPattern = ":" + hoveredWord + ":";
+		let theoremPattern = "theorem " + hoveredWord + ":";
+		let labelPattern = hoveredWord + ":";
+
+		// 定義を参照する場合
+		if ( (startIndex = documentText.indexOf(definitionPattern)) > -1 ){
+			startIndex = documentText.lastIndexOf('definition', startIndex);
+			endIndex = startIndex
+					+ documentText.slice(startIndex).search(/\send\s*;/g)
+					+ '\nend;'.length;
+		}
+		// 定理を参照する場合
+		else if ( (startIndex = documentText.indexOf(theoremPattern)) > -1 ){
+			endIndex = startIndex 
+					+ documentText.slice(startIndex).search(/(\sproof|;)/g)
+					+ '\n'.length;
+		}
+		// ラベルを参照する場合
+		else if ( (startIndex = documentText.lastIndexOf(labelPattern, 
+									document.offsetAt(wordRange.start)-1)) > -1)
+		{
+			endIndex = startIndex 
+					+ documentText.slice(startIndex).search(/;/)
+					+ ';'.length;
+		}
+		// ホバー対象でない場合
+		else{
+			return{
+				contents: ""
+			};
+		}
+		const markdown: MarkupContent = {
+			kind: MarkupKind.PlainText,
+			value: documentText.slice(startIndex,endIndex)
+		};
+		//const markdown: MarkedString[] = [
+		//	{ language: 'Mizar', value: documentText.slice(startIndex,endIndex) }
+		//];
            
 		return {
 			contents: markdown,
-			range: {start:position, end:position}
+			range: wordRange
 		};
 });
 
