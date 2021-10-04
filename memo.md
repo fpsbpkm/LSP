@@ -13,15 +13,17 @@ if (found){
 }
 console.log(found);
 ```
+- [ ] getWordRangeAtPositionの修正（by A13,FINSEQ_3:25;のときどこでもFINSEQ_3:25のRangeになる）
+- [ ] hover.tsのreturnMMLHoverのvscode.workspace.openTextDocument(fileName)
+- [ ] Rangeとcontentsを返す関数に分けなければならない
+  - : Rangeのreturn
+- [ ] 
   
 <br>
 
 - document.ts
 - slackみる
 
-- どこをいじれば何が変わるか
-- 環境構築
-- まとめる
 ### 序論
 - Mizarとほかの定理証明支援系（coq,lean）のこととそのエディタについて
 - LSPとは何か
