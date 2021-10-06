@@ -20,8 +20,8 @@ console.log(found);
     FUNCT_2:sch 4;
     ```
     ```
-        reconsider s1 = s|Seg i as FinSequence of the adjectives of T by
-    FINSEQ_1:18;
+        is_properly_applicable_to t1 "\/" t2 & A ast (t1 "\/" t2) = t1 by A5,A6
+    ,Def30;
     ```
 - [ ] hover.tsのreturnMMLHoverのvscode.workspace.openTextDocument(fileName)
 - [ ] Rangeとcontentsを返す関数に分けなければならない
