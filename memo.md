@@ -20,8 +20,8 @@ console.log(found);
     FUNCT_2:sch 4;
     ```
     ```
-        is_properly_applicable_to t1 "\/" t2 & A ast (t1 "\/" t2) = t1 by A5,A6
-    ,Def30;
+         hence (Rev p).(1+(j+1)) = apply(r, t2).(1+(j+1)) by A19,A21,A29,A30,A31
+    ,A33,A24,A26,Def19,NAT_1:13;
     ```
 - [ ] hover.tsのreturnMMLHoverのvscode.workspace.openTextDocument(fileName)
 - [ ] Rangeとcontentsを返す関数に分けなければならない
