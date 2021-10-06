@@ -27,10 +27,10 @@ import * as path from 'path';
 const Abstr = "abstr";
 const mizfiles = process.env.MIZFILES;
 
-function returnHover(
+export function returnHover(
 	document: TextDocument,
 	wordRange: Range
-): Hover
+)
 {
 	let documentText = document.getText();
 	let hoveredWord = document.getText(wordRange);
@@ -64,88 +64,81 @@ function returnHover(
 				+ ';'.length;
 	}
 	// ホバー対象でない場合
-	else{
-		return{
-			contents: ""
-		};
-	}
+	
 	const contents: MarkupContent = {
 		kind: MarkupKind.PlainText,
 		value: documentText.slice(startIndex,endIndex)
 	};	
-	const range = wordRange;
-	return {
-		contents,
-		range
-	};
+	
+	return contents;
 }
 
-function returnMMLHover(
-    document: TextDocument,
-    wordRange: Range
-):Promise<Hover>
-{
-    if(mizfiles === undefined){
-        return new Promise((resolve,reject) => {
-            reject(
-                new Error('You have to set environment variable "MIZFILES"')
-            );
-        });
-    }
-    let absDir = path.join(mizfiles,Abstr);
-    let hoverInformation:Promise<Hover> = new Promise 
-    ((resolve, reject)=> {
-        let hoveredWord = document.getText(wordRange);
-        let [fileName, referenceWord] = hoveredWord.split(':');
-        // .absのファイルを参照する
-        fileName = path.join(absDir,fileName.toLowerCase() + '.abs');
-        vscode.workspace.openTextDocument(fileName)
-        .then(　(document: TextDocument) => {
-            let documentText = document.getText();
-            // ホバーによって示されるテキストの開始・終了インデックスを格納する変数
-            let startIndex:number = 0;
-            let endIndex:number = 0;
-            // hoveredWordは.absファイルで一意のキーになる
-            let wordIndex = documentText.indexOf(hoveredWord);
-            // definitionを参照する場合
-            if (/def\s+\d+/.test(referenceWord)){
-                startIndex = documentText.lastIndexOf(
-                    'definition', 
-                    wordIndex
-                );
-                endIndex = wordIndex 
-                            + documentText.slice(wordIndex).search(/\send\s*;/)
-                            + 'end;'.length;
-            }
-            // schemeを参照する場合
-            else if(/sch\s+\d+/.test(referenceWord)){
-                startIndex = documentText.lastIndexOf(
-                    'scheme',
-                    wordIndex
-                );
-                endIndex = wordIndex + documentText.slice(wordIndex).search(/;/);
-            }
-            // theoremを参照する場合
-            else{
-                startIndex = documentText.lastIndexOf(
-                    'theorem',
-                    wordIndex
-                );
-                endIndex = wordIndex + documentText.slice(wordIndex).search(/;/)
-                            + ';'.length;
-            }
-			const contents: MarkupContent = {
-				kind: MarkupKind.PlainText,
-				value: documentText.slice(startIndex,endIndex)
-			};
-			const range = wordRange
-            resolve({contents, range});
-        },() => {
-            reject();
-        });
-    });
-    return hoverInformation;
-}
+// function returnMMLHover(
+//     document: TextDocument,
+//     wordRange: Range
+// ):Promise<Hover>
+// {
+//     if(mizfiles === undefined){
+//         return new Promise((resolve,reject) => {
+//             reject(
+//                 new Error('You have to set environment variable "MIZFILES"')
+//             );
+//         });
+//     }
+//     let absDir = path.join(mizfiles,Abstr);
+//     let hoverInformation:Promise<Hover> = new Promise 
+//     ((resolve, reject)=> {
+//         let hoveredWord = document.getText(wordRange);
+//         let [fileName, referenceWord] = hoveredWord.split(':');
+//         // .absのファイルを参照する
+//         fileName = path.join(absDir,fileName.toLowerCase() + '.abs');
+//         vscode.workspace.openTextDocument(fileName)
+//         .then(　(document: TextDocument) => {
+//             let documentText = document.getText();
+//             // ホバーによって示されるテキストの開始・終了インデックスを格納する変数
+//             let startIndex:number = 0;
+//             let endIndex:number = 0;
+//             // hoveredWordは.absファイルで一意のキーになる
+//             let wordIndex = documentText.indexOf(hoveredWord);
+//             // definitionを参照する場合
+//             if (/def\s+\d+/.test(referenceWord)){
+//                 startIndex = documentText.lastIndexOf(
+//                     'definition', 
+//                     wordIndex
+//                 );
+//                 endIndex = wordIndex 
+//                             + documentText.slice(wordIndex).search(/\send\s*;/)
+//                             + 'end;'.length;
+//             }
+//             // schemeを参照する場合
+//             else if(/sch\s+\d+/.test(referenceWord)){
+//                 startIndex = documentText.lastIndexOf(
+//                     'scheme',
+//                     wordIndex
+//                 );
+//                 endIndex = wordIndex + documentText.slice(wordIndex).search(/;/);
+//             }
+//             // theoremを参照する場合
+//             else{
+//                 startIndex = documentText.lastIndexOf(
+//                     'theorem',
+//                     wordIndex
+//                 );
+//                 endIndex = wordIndex + documentText.slice(wordIndex).search(/;/)
+//                             + ';'.length;
+//             }
+// 			const contents: MarkupContent = {
+// 				kind: MarkupKind.PlainText,
+// 				value: documentText.slice(startIndex,endIndex)
+// 			};
+// 			const range = wordRange
+//             resolve({contents, range});
+//         },() => {
+//             reject();
+//         });
+//     });
+//     return hoverInformation;
+// }
 
 
 export function getWordRange(
@@ -159,24 +152,11 @@ export function getWordRange(
 
 	let found;
 	let wordRange: Range | undefined;
-	
-	if (/(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/g.test(text)){
-		let result;
-		const p = /(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/g;
-		while (result = p.exec(text)) {
-			if(position.character < p.lastIndex){
-				wordRange = {
-					"start": { "line": position.line, "character": result.index },
-					"end": { "line": position.line, "character": p.lastIndex }
-				}
-				return wordRange;
-			}
-		}
-	}
-	else if (found = /(by\s+(\w+(,|\s|:)*)+|from\s+\w+(:sch\s+\d+)*\((\w+,*)+\))/g.exec(text)){
+
+	if (found = /(by\s+(\w+(,|\s|:)*)+|from\s+\w+(:sch\s+\d+)*\((\w+,*)+\))/g.exec(text)){
 		const index = found.index;
 		let result;
-		const p = /\w+/g;
+		const p = /\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+|\w+/g;
 		while (result = p.exec(found[0])) {
 			if(position.character < index+p.lastIndex){
 				wordRange = {
