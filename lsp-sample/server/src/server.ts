@@ -25,7 +25,7 @@ import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
 
-import { getWordRange } from './hover';
+import { getWordRange, returnHover } from './hover';
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -238,26 +238,24 @@ connection.onHover(
         }
 		const position = params.position;
 
-		const text = document.getText({
-			"start": { "line": position.line, "character": 0 },
-			"end": { "line": position.line, "character": 100 }
-		});
-
 		let wordRange = getWordRange(document, position);
 		
-		let text2;
-		if(wordRange){
-			text2 = document.getText(wordRange);
-			console.log(text2);
+		let contents: MarkupContent ;
+		if (!wordRange || document.getText(wordRange) === 'by'){
+			return{
+				contents: ""
+			};
+		}
+		else if(/(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/g.test(document.getText(wordRange))){
+			return{
+				contents: "MMLHover",
+				range: wordRange
+			};
+		}
+		else{
+			contents = returnHover(document, wordRange);
 		}
 
-		const contents: MarkupContent = {
-			kind: MarkupKind.PlainText,
-			value: text
-		};
-		//const contents: MarkedString[] = [
-		//	{ language: 'Mizar', value: documentText.slice(startIndex,endIndex) }
-		//];
 		const range = wordRange;
            
 		return {
