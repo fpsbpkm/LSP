@@ -14,6 +14,15 @@ if (found){
 console.log(found);
 ```
 - [ ] getWordRangeAtPositionの修正（by A13,FINSEQ_3:25;のときどこでもFINSEQ_3:25のRangeになる）
+- [ ] 改行している場合
+    ```
+    A1: for a being Element of the adjectives of T holds f.a = F(a) from
+    FUNCT_2:sch 4;
+    ```
+    ```
+        reconsider s1 = s|Seg i as FinSequence of the adjectives of T by
+    FINSEQ_1:18;
+    ```
 - [ ] hover.tsのreturnMMLHoverのvscode.workspace.openTextDocument(fileName)
 - [ ] Rangeとcontentsを返す関数に分けなければならない
   - : Rangeのreturn
