@@ -235,7 +235,7 @@ connection.onHover(
             return {
 				contents: ""
 			}
-        }
+    }
 		const position = params.position;
 
 		let wordRange = getWordRange(document, position);
@@ -251,6 +251,7 @@ connection.onHover(
 				contents: "MMLHover",
 				range: wordRange
 			};
+
 		}
 		else{
 			contents = returnHover(document, wordRange);

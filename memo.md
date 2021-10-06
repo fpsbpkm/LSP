@@ -13,15 +13,26 @@ if (found){
 }
 console.log(found);
 ```
+- [ ] getWordRangeAtPositionの修正（by A13,FINSEQ_3:25;のときどこでもFINSEQ_3:25のRangeになる）
+- [ ] 改行している場合
+    ```
+    A1: for a being Element of the adjectives of T holds f.a = F(a) from
+    FUNCT_2:sch 4;
+    ```
+    ```
+         hence (Rev p).(1+(j+1)) = apply(r, t2).(1+(j+1)) by A19,A21,A29,A30,A31
+    ,A33,A24,A26,Def19,NAT_1:13;
+    ```
+- [ ] hover.tsのreturnMMLHoverのvscode.workspace.openTextDocument(fileName)
+- [ ] Rangeとcontentsを返す関数に分けなければならない
+  - : Rangeのreturn
+- [ ] 
   
 <br>
 
 - document.ts
 - slackみる
 
-- どこをいじれば何が変わるか
-- 環境構築
-- まとめる
 ### 序論
 - Mizarとほかの定理証明支援系（coq,lean）のこととそのエディタについて
 - LSPとは何か
