@@ -25,6 +25,8 @@ import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
 
+import { getWordRange, returnHover } from './hover';
+
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
@@ -233,46 +235,29 @@ connection.onHover(
             return {
 				contents: ""
 			}
-        }
+    }
 		const position = params.position;
 
-		const text = document.getText({
-			"start": { "line": position.line, "character": 0 },
-			"end": { "line": position.line, "character": 100 }
-		});
-
-		let found;
-		let wordRange: Range | undefined;
-
-		if (found = /(by\s+(\w+(,|\s|:)*)+|from\s+\w+(:sch\s+\d+)*\((\w+,*)+\))/g.exec(text)){
-			const index = found.index;
-			let result;
-			const p = /\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+|\w+/g;
-			while (result = p.exec(found[0])) {
-				
-				if(position.character < index+p.lastIndex){
-					wordRange = {
-						"start": { "line": position.line, "character": index+result.index },
-			            "end": { "line": position.line, "character": index+p.lastIndex }
-					}
-					break;
-				}
-			}
+		let wordRange = getWordRange(document, position);
+		
+		let contents: MarkupContent ;
+		if (!wordRange || document.getText(wordRange) === 'by'){
+			return{
+				contents: ""
+			};
 		}
-		let text2;
-		if(wordRange){
-			text2 = document.getText(wordRange);
-			console.log(text2);
+		else if(/(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/g.test(document.getText(wordRange))){
+			return{
+				contents: "MMLHover",
+				range: wordRange
+			};
+
+		}
+		else{
+			contents = returnHover(document, wordRange);
 		}
 
-		const contents: MarkupContent = {
-			kind: MarkupKind.PlainText,
-			value: text
-		};
-		//const contents: MarkedString[] = [
-		//	{ language: 'Mizar', value: documentText.slice(startIndex,endIndex) }
-		//];
-		const range = {start:position, end:position};
+		const range = wordRange;
            
 		return {
 			contents,
