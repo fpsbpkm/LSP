@@ -29,7 +29,8 @@ console.log(found);
 - [x] Rangeとcontentsを返す関数に分けなければならない
   - 型指定しない関数だとできた
   - 型指定する必要があるのか
-- [ ] 
+- [ ] contents -> MarkupContentの空の返し方
+  - Stringでvalue: "" を返す？
   
 <br>
 
