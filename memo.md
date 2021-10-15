@@ -26,12 +26,25 @@ console.log(found);
     ,A33,A24,A26,Def19,NAT_1:13;
     ```
 - [ ] hover.tsのreturnMMLHoverのvscode.workspace.openTextDocument(fileName)
+  - [ ] promiseの処理
+  - [ ] fileNameをuriに変換
+    - vscode-uriを使えばできる
+    ```
+    C:\mizar\abstr\zfmisc_1.abs
+    ↓
+    file:///c%3A/mizar/abstr/zfmisc_1.abs
+    ```
+    - そのuriではdocument.getができない
+    - test.mizのuri
+    ```
+    file:///c%3A/Users/i072ff/Desktop/test-mizar/test.miz
+    ```
 - [x] Rangeとcontentsを返す関数に分けなければならない
   - 型指定しない関数だとできた
   - 型指定する必要があるのか
 - [ ] contents -> MarkupContentの空の返し方
   - Stringでvalue: "" を返す？
-  
+- [ ]   
 <br>
 
 - document.ts
