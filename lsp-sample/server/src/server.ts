@@ -272,7 +272,6 @@ connection.onDefinition(
 
 		const wordRange = getWordRange(document, position);
 		
-		let contents: MarkupContent ;
 		if (!wordRange || document.getText(wordRange) === 'by'){
 			return [];
 		}
@@ -286,7 +285,7 @@ connection.onDefinition(
 		// 自身のファイル内の定義、定理、ラベルを参照する場合
 		else{
 			return returnDefinition(document, wordRange);
-		}
+		}		
 });
 // Make the text document manager listen on the connection
 // for open, change and close text document events

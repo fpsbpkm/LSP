@@ -145,7 +145,6 @@ export function returnHover(
 //     return hoverInformation;
 // }
 
-// 
 export function getWordRange(
 	document: TextDocument,
     position: Position
