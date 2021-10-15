@@ -17,13 +17,21 @@ import {
 	InitializeResult,
 	Hover,
 	MarkupContent,
-	MarkupKind
+	Definition
 } from 'vscode-languageserver/node';
 
 import {
-	Range,
 	TextDocument
 } from 'vscode-languageserver-textdocument';
+
+import { 
+	getWordRange, 
+	returnHover 
+} from './hover';
+
+import { 
+	returnDefinition 
+} from './goToDefinition';
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -60,7 +68,8 @@ connection.onInitialize((params: InitializeParams) => {
 			completionProvider: {
 				resolveProvider: true
 			},
-			hoverProvider: true
+			hoverProvider: true,
+			definitionProvider: true
 		}
 	};
 	if (hasWorkspaceFolderCapability) {
@@ -226,60 +235,59 @@ connection.onCompletionResolve(
 		return item;
 	}
 );
+
 connection.onHover(
 	(params: TextDocumentPositionParams): Hover => {
 		const document = documents.get(params.textDocument.uri);
 		if (document === undefined) {
-            return {
-				contents: ""
-			}
+            return{ contents: [] };
         }
 		const position = params.position;
 
-		const text = document.getText({
-			"start": { "line": position.line, "character": 0 },
-			"end": { "line": position.line, "character": 100 }
-		});
-
-		let found;
-		let wordRange: Range | undefined;
-
-		if (found = /(by\s+(\w+(,|\s|:)*)+|from\s+\w+(:sch\s+\d+)*\((\w+,*)+\))/g.exec(text)){
-			const index = found.index;
-			let result;
-			const p = /\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+|\w+/g;
-			while (result = p.exec(found[0])) {
-				
-				if(position.character < index+p.lastIndex){
-					wordRange = {
-						"start": { "line": position.line, "character": index+result.index },
-			            "end": { "line": position.line, "character": index+p.lastIndex }
-					}
-					break;
-				}
-			}
+		const wordRange = getWordRange(document, position);
+		
+		if (!wordRange || document.getText(wordRange) === 'by'){
+			return{ contents: [] };
 		}
-		let text2;
-		if(wordRange){
-			text2 = document.getText(wordRange);
-			console.log(text2);
+		// 外部ファイル（MML）の定義、定理、スキームを参照する場合
+		else if(/(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/g.test(document.getText(wordRange))){
+			return{
+				contents: "MMLHover",
+				range: wordRange
+			};
 		}
-
-		const contents: MarkupContent = {
-			kind: MarkupKind.PlainText,
-			value: text
-		};
-		//const contents: MarkedString[] = [
-		//	{ language: 'Mizar', value: documentText.slice(startIndex,endIndex) }
-		//];
-		const range = {start:position, end:position};
-           
-		return {
-			contents,
-			range
-		};
+		// 自身のファイル内の定義、定理、ラベルを参照する場合
+		else{
+			return returnHover(document, wordRange);
+		}
 });
 
+connection.onDefinition(
+	(params: TextDocumentPositionParams): Definition => {
+		const document = documents.get(params.textDocument.uri);
+		if (document === undefined) {
+            return [];
+        }
+		const position = params.position;
+
+		const wordRange = getWordRange(document, position);
+		
+		let contents: MarkupContent ;
+		if (!wordRange || document.getText(wordRange) === 'by'){
+			return [];
+		}
+		// 外部ファイル（MML）の定義、定理、スキームを参照する場合
+		else if(/(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/g.test(document.getText(wordRange))){
+			return{
+				uri: params.textDocument.uri,
+				range: wordRange
+			};
+		}
+		// 自身のファイル内の定義、定理、ラベルを参照する場合
+		else{
+			return returnDefinition(document, wordRange);
+		}
+});
 // Make the text document manager listen on the connection
 // for open, change and close text document events
 documents.listen(connection);
