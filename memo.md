@@ -1,5 +1,17 @@
 - [x] textDocument gettext
-- [x] markdownに変換
+- [x] MarkupContentまたはMarkedStringに変換  
+  - MarkedStringは非推奨と表示されるがtypescript-language-serverでは利用している
+    ```
+		const contents: MarkedString[] = [
+			{ language: 'Mizar', value: documentText.slice(startIndex,endIndex) }
+		];
+    ```
+     ```
+    const contents: MarkupContent = {
+			kind: MarkupKind.PlainText,
+			value: documentText.slice(startIndex,endIndex)
+		};
+    ```
 - [x] match,正規表現で単語を抽出
 ```
 const paragraph = 'A5: a divides k by A1,A2,A4,NAT_D:def 5;';
@@ -16,7 +28,8 @@ console.log(found);
 - [x] getWordRangeAtPositionの修正（by A13,FINSEQ_3:25;のときどこでもFINSEQ_3:25のRangeになる）
   - if文を一つにまとめる
   - 
-- [ ] 改行している場合
+- [ ] 改行している場合2行目は対象外
+  - emvscodeでも同じ
     ```
     A1: for a being Element of the adjectives of T holds f.a = F(a) from
     FUNCT_2:sch 4;
@@ -40,10 +53,8 @@ console.log(found);
     file:///c%3A/Users/i072ff/Desktop/test-mizar/test.miz
     ```
 - [x] Rangeとcontentsを返す関数に分けなければならない
-  - 型指定しない関数だとできた
+  
   - 型指定する必要があるのか
-- [ ] contents -> MarkupContentの空の返し方
-  - Stringでvalue: "" を返す？
 - [ ]   
 <br>
 
