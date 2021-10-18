@@ -43,14 +43,18 @@ console.log(found);
   - [ ] fileNameをuriに変換
     - vscode-uriを使えばできる
     ```
-    C:\mizar\abstr\zfmisc_1.abs
+    C:\mizar\abstr\abcmiz_0.abs
     ↓
-    file:///c%3A/mizar/abstr/zfmisc_1.abs
+    file:///c%3A/mizar/abstr/abcmiz_0.abs
     ```
     - そのuriではdocument.getができない
     - test.mizのuri
     ```
     file:///c%3A/Users/i072ff/Desktop/test-mizar/test.miz
+    ```
+    - 無理やり取得したuri
+    ```
+    file:///c%3A/mizar/abstr/abcmiz_0.abs
     ```
 - [x] Rangeとcontentsを返す関数に分けなければならない
   
