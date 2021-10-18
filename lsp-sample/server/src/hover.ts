@@ -22,10 +22,14 @@ import {
 	TextDocument,
 } from 'vscode-languageserver-textdocument';
 
+import { URI } from 'vscode-uri';
+
 import * as path from 'path';
 
 const Abstr = "abstr";
 const mizfiles = process.env.MIZFILES;
+
+const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 export function returnHover(
 	document: TextDocument,
@@ -78,72 +82,75 @@ export function returnHover(
 	};
 }
 
-// function returnMMLHover(
-//     document: TextDocument,
-//     wordRange: Range
-// ):Promise<Hover>
-// {
-//     if(mizfiles === undefined){
-//         return new Promise((resolve,reject) => {
-//             reject(
-//                 new Error('You have to set environment variable "MIZFILES"')
-//             );
-//         });
-//     }
-//     let absDir = path.join(mizfiles,Abstr);
-//     let hoverInformation:Promise<Hover> = new Promise 
-//     ((resolve, reject)=> {
-//         let hoveredWord = document.getText(wordRange);
-//         let [fileName, referenceWord] = hoveredWord.split(':');
-//         // .absのファイルを参照する
-//         fileName = path.join(absDir,fileName.toLowerCase() + '.abs');
-//         vscode.workspace.openTextDocument(fileName)
-//         .then(　(document: TextDocument) => {
-//             let documentText = document.getText();
-//             // ホバーによって示されるテキストの開始・終了インデックスを格納する変数
-//             let startIndex:number = 0;
-//             let endIndex:number = 0;
-//             // hoveredWordは.absファイルで一意のキーになる
-//             let wordIndex = documentText.indexOf(hoveredWord);
-//             // definitionを参照する場合
-//             if (/def\s+\d+/.test(referenceWord)){
-//                 startIndex = documentText.lastIndexOf(
-//                     'definition', 
-//                     wordIndex
-//                 );
-//                 endIndex = wordIndex 
-//                             + documentText.slice(wordIndex).search(/\send\s*;/)
-//                             + 'end;'.length;
-//             }
-//             // schemeを参照する場合
-//             else if(/sch\s+\d+/.test(referenceWord)){
-//                 startIndex = documentText.lastIndexOf(
-//                     'scheme',
-//                     wordIndex
-//                 );
-//                 endIndex = wordIndex + documentText.slice(wordIndex).search(/;/);
-//             }
-//             // theoremを参照する場合
-//             else{
-//                 startIndex = documentText.lastIndexOf(
-//                     'theorem',
-//                     wordIndex
-//                 );
-//                 endIndex = wordIndex + documentText.slice(wordIndex).search(/;/)
-//                             + ';'.length;
-//             }
-// 			const contents: MarkupContent = {
-// 				kind: MarkupKind.PlainText,
-// 				value: documentText.slice(startIndex,endIndex)
-// 			};
-// 			const range = wordRange
-//             resolve({contents, range});
-//         },() => {
-//             reject();
-//         });
-//     });
-//     return hoverInformation;
-// }
+export function returnMMLHover(
+    document: TextDocument,
+    wordRange: Range
+):Hover
+{
+    if(mizfiles === undefined){
+        return{ contents: [] };
+    }
+    const absDir = path.join(mizfiles,Abstr);
+
+	const hoveredWord = document.getText(wordRange);
+	let [fileName, referenceWord] = hoveredWord.split(':');
+	// .absのファイルを参照する
+	fileName = path.join(absDir,fileName.toLowerCase() + '.abs');
+
+	console.log(document.uri);
+	console.log(uriToPath(document.uri));
+	console.log(pathToUri(document.uri,undefined));
+	console.log(fileName);
+	console.log(uriToPath(fileName));
+	console.log(pathToUri(fileName,undefined));
+
+	const MMLdocument = documents.get(pathToUri(fileName,undefined));
+	if (MMLdocument === undefined) {
+		return{ contents: [] };
+	}
+	const documentText = MMLdocument.getText();
+	// ホバーによって示されるテキストの開始・終了インデックスを格納する変数
+	let startIndex = 0;
+	let endIndex = 0;
+	// hoveredWordは.absファイルで一意のキーになる
+	const wordIndex = documentText.indexOf(hoveredWord);
+	// definitionを参照する場合
+	if (/def\s+\d+/.test(referenceWord)){
+		startIndex = documentText.lastIndexOf(
+			'definition', 
+			wordIndex
+		);
+		endIndex = wordIndex 
+					+ documentText.slice(wordIndex).search(/\send\s*;/)
+					+ 'end;'.length;
+	}
+	// schemeを参照する場合
+	else if(/sch\s+\d+/.test(referenceWord)){
+		startIndex = documentText.lastIndexOf(
+			'scheme',
+			wordIndex
+		);
+		endIndex = wordIndex + documentText.slice(wordIndex).search(/;/);
+	}
+	// theoremを参照する場合
+	else{
+		startIndex = documentText.lastIndexOf(
+			'theorem',
+			wordIndex
+		);
+		endIndex = wordIndex + documentText.slice(wordIndex).search(/;/)
+					+ ';'.length;
+	}
+	const contents: MarkupContent = {
+		kind: MarkupKind.PlainText,
+		value: documentText.slice(startIndex,endIndex)
+	};
+	
+    return{
+		contents,
+		range: wordRange
+	};
+}
 
 export function getWordRange(
 	document: TextDocument,
@@ -174,4 +181,30 @@ export function getWordRange(
 			}
 		}
 	}
+}
+
+
+
+export function uriToPath(stringUri: string): string | undefined {
+    const uri = URI.parse(stringUri);
+    if (uri.scheme !== 'file') {
+        return undefined;
+    }
+    return uri.fsPath;
+}
+
+function parsePathOrUri(filepath: string): URI {
+    // handles valid URIs from yarn pnp, will error if doesn't have scheme
+    // zipfile:/foo/bar/baz.zip::path/to/module
+    if (filepath.startsWith('zipfile:')) {
+        return URI.parse(filepath);
+    }
+    // handles valid filepaths from everything else /path/to/module
+    return URI.file(filepath);
+}
+
+export function pathToUri(filepath: string, documents: TextDocuments<TextDocument> | undefined): string {
+    const fileUri = parsePathOrUri(filepath);
+    const document = documents && documents.get(fileUri.fsPath);
+    return document ? document.uri : fileUri.toString();
 }
