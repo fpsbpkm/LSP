@@ -26,7 +26,8 @@ import {
 
 import { 
 	getWordRange, 
-	returnHover 
+	returnHover,
+	returnMMLHover 
 } from './hover';
 
 import { 
@@ -251,10 +252,7 @@ connection.onHover(
 		}
 		// 外部ファイル（MML）の定義、定理、スキームを参照する場合
 		else if(/(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/g.test(document.getText(wordRange))){
-			return{
-				contents: "MMLHover",
-				range: wordRange
-			};
+			return returnMMLHover(document, wordRange);
 		}
 		// 自身のファイル内の定義、定理、ラベルを参照する場合
 		else{
