@@ -22,14 +22,11 @@ import {
 	TextDocument,
 } from 'vscode-languageserver-textdocument';
 
-import { URI } from 'vscode-uri';
-
 import * as path from 'path';
 
 const Abstr = "abstr";
 const mizfiles = process.env.MIZFILES;
-
-const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+const fs = require('fs');
 
 export function returnHover(
 	document: TextDocument,
@@ -97,18 +94,7 @@ export function returnMMLHover(
 	// .absのファイルを参照する
 	fileName = path.join(absDir,fileName.toLowerCase() + '.abs');
 
-	console.log(document.uri);
-	console.log(uriToPath(document.uri));
-	console.log(pathToUri(document.uri,undefined));
-	console.log(fileName);
-	console.log(uriToPath(fileName));
-	console.log(pathToUri(fileName,undefined));
-
-	const MMLdocument = documents.get(pathToUri(fileName,undefined));
-	if (MMLdocument === undefined) {
-		return{ contents: [] };
-	}
-	const documentText = MMLdocument.getText();
+	const documentText = fs.readFileSync(fileName, "utf-8");
 	// ホバーによって示されるテキストの開始・終了インデックスを格納する変数
 	let startIndex = 0;
 	let endIndex = 0;
@@ -181,30 +167,4 @@ export function getWordRange(
 			}
 		}
 	}
-}
-
-
-
-export function uriToPath(stringUri: string): string | undefined {
-    const uri = URI.parse(stringUri);
-    if (uri.scheme !== 'file') {
-        return undefined;
-    }
-    return uri.fsPath;
-}
-
-function parsePathOrUri(filepath: string): URI {
-    // handles valid URIs from yarn pnp, will error if doesn't have scheme
-    // zipfile:/foo/bar/baz.zip::path/to/module
-    if (filepath.startsWith('zipfile:')) {
-        return URI.parse(filepath);
-    }
-    // handles valid filepaths from everything else /path/to/module
-    return URI.file(filepath);
-}
-
-export function pathToUri(filepath: string, documents: TextDocuments<TextDocument> | undefined): string {
-    const fileUri = parsePathOrUri(filepath);
-    const document = documents && documents.get(fileUri.fsPath);
-    return document ? document.uri : fileUri.toString();
 }
