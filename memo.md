@@ -38,9 +38,9 @@ console.log(found);
          hence (Rev p).(1+(j+1)) = apply(r, t2).(1+(j+1)) by A19,A21,A29,A30,A31
     ,A33,A24,A26,Def19,NAT_1:13;
     ```
-~~- [ ] hover.tsのreturnMMLHoverのvscode.workspace.openTextDocument(fileName)~~
+- [ ] hover.tsのreturnMMLHoverのvscode.workspace.openTextDocument(fileName)
   - [ ] promiseの処理
-  - [ ] fileNameをuriに変換
+  ~~- [x] fileNameをuriに変換~~
     - vscode-uriを使えばできる
     ```
     C:\mizar\abstr\abcmiz_0.abs
