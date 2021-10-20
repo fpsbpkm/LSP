@@ -1,26 +1,26 @@
 import {
-	createConnection,
-	TextDocuments,
-	Diagnostic,
-	DiagnosticSeverity,
-	ProposedFeatures,
-	InitializeParams,
-	DidChangeConfigurationNotification,
-	CompletionItem,
-	CompletionItemKind,
-	TextDocumentPositionParams,
-	TextDocumentSyncKind,
-	InitializeResult,
-	Hover,
-	MarkupContent,
-	MarkupKind,
-	Position,
-	Definition
+    createConnection,
+    TextDocuments,
+    Diagnostic,
+    DiagnosticSeverity,
+    ProposedFeatures,
+    InitializeParams,
+    DidChangeConfigurationNotification,
+    CompletionItem,
+    CompletionItemKind,
+    TextDocumentPositionParams,
+    TextDocumentSyncKind,
+    InitializeResult,
+    Hover,
+    MarkupContent,
+    MarkupKind,
+    Position,
+    Definition
 } from 'vscode-languageserver/node';
 
 import {
-	Range,
-	TextDocument,
+    Range,
+    TextDocument,
 } from 'vscode-languageserver-textdocument';
 
 import * as path from 'path';
@@ -29,19 +29,19 @@ const Abstr = "abstr";
 const mizfiles = process.env.MIZFILES;
 
 export function returnDefinition(
-	document: TextDocument,
-	wordRange: Range
+    document: TextDocument,
+    wordRange: Range
 ): Definition
 {
-	const documentText = document.getText();
-	const selectedWord = document.getText(wordRange);
-	// 定義箇所のインデックスを格納する変数
-	let startIndex = 0;
-	let endIndex = 0;
-	// 定義・定理・ラベルの参照する箇所のパターンをそれぞれ格納
-	const definitionPattern = ":" + selectedWord + ":";
-	const theoremPattern = "theorem " + selectedWord + ":";
-	const labelPattern = selectedWord + ":";
+    const documentText = document.getText();
+    const selectedWord = document.getText(wordRange);
+    // 定義箇所のインデックスを格納する変数
+    let startIndex = 0;
+    let endIndex = 0;
+    // 定義・定理・ラベルの参照する箇所のパターンをそれぞれ格納
+    const definitionPattern = ":" + selectedWord + ":";
+    const theoremPattern = "theorem " + selectedWord + ":";
+    const labelPattern = selectedWord + ":";
 
     // 定義を参照する場合
     if ((startIndex = documentText.indexOf(definitionPattern)) > -1){
