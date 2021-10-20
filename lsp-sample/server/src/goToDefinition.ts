@@ -24,9 +24,11 @@ import {
 } from 'vscode-languageserver-textdocument';
 
 import * as path from 'path';
+import { URI } from 'vscode-uri';
 
 const Abstr = "abstr";
 const mizfiles = process.env.MIZFILES;
+const fs = require('fs');
 
 export function returnDefinition(
 	document: TextDocument,
@@ -66,3 +68,28 @@ export function returnDefinition(
     };
 }
 
+export function returnABSDefinition(
+    document: TextDocument,
+    wordRange: Range
+): Definition
+{
+    if(mizfiles === undefined){
+        return [];
+    }
+    const absDir = path.join(mizfiles,Abstr);
+	const selectedWord = document.getText(wordRange);
+	let [fileName] = selectedWord.split(':');
+	// .absのファイルを参照する
+	fileName = path.join(absDir,fileName.toLowerCase() + '.abs');
+	const documentText = fs.readFileSync(fileName, "utf-8");
+	let index = documentText.indexOf(selectedWord);
+	let uri = URI.file(fileName).toString();
+
+    return {
+        uri,
+        range: {
+            start: document.positionAt(index),
+            end: document.positionAt(index + selectedWord.length)
+        }
+    };
+}

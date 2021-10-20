@@ -31,7 +31,8 @@ import {
 } from './hover';
 
 import { 
-	returnDefinition 
+	returnDefinition,
+	returnABSDefinition
 } from './goToDefinition';
 
 // Create a connection for the server, using Node's IPC as a transport.
@@ -276,10 +277,7 @@ connection.onDefinition(
 		}
 		// 外部ファイル（MML）の定義、定理、スキームを参照する場合
 		else if(/(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/g.test(document.getText(wordRange))){
-			return{
-				uri: params.textDocument.uri,
-				range: wordRange
-			};
+			return returnABSDefinition(document, wordRange);
 		}
 		// 自身のファイル内の定義、定理、ラベルを参照する場合
 		else{
