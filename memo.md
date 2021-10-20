@@ -40,7 +40,8 @@ console.log(found);
     ```
 - [ ] hover.tsのreturnMMLHoverのvscode.workspace.openTextDocument(fileName)
   - [ ] promiseの処理
-  ~~- [x] fileNameをuriに変換~~
+  - [ ] 
+  ~~- fileNameをuriに変換~~
     - vscode-uriを使えばできる
     ```
     C:\mizar\abstr\abcmiz_0.abs
@@ -51,10 +52,6 @@ console.log(found);
     - test.mizのuri
     ```
     file:///c%3A/Users/i072ff/Desktop/test-mizar/test.miz
-    ```
-    - 無理やり取得したuri
-    ```
-    file:///c%3A/mizar/abstr/abcmiz_0.abs
     ```
 - [x] Rangeとcontentsを返す関数に分けなければならない
   
